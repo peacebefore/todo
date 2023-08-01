@@ -32,7 +32,7 @@ class MyHomePage extends ConsumerWidget {
       body: ListView.builder(
         itemCount: activeTodos.length + 1,
         itemBuilder: (context, index) {
-          if (activeTodos.isEmpty) {
+          if (activeTodos.isEmpty && completedTodos.isEmpty) {
             return const Padding(
               padding: EdgeInsets.only(top: 300.0),
               child: Center(
@@ -44,16 +44,19 @@ class MyHomePage extends ConsumerWidget {
             if(completedTodos.isEmpty) {
               return Container(); 
             } else {
-              return Center(
-                child: TextButton(
-                  child: const Text("Completed Todos"),
-                  onPressed: () => Navigator.of(context).push(
-                    MaterialPageRoute(
-                      builder: (context) => const CompletedTodo()
+              return Padding(
+                padding: const EdgeInsets.only(top: 300.0),
+                child: Center(
+                  child: TextButton(
+                    child: const Text("Completed Todos"),
+                    onPressed: () => Navigator.of(context).push(
+                      MaterialPageRoute(
+                        builder: (context) => const CompletedTodo()
+                      ),
                     ),
                   ),
-                ),
-               );
+                 ),
+              );
             }
           } else {
             return Slidable(

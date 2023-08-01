@@ -57,7 +57,7 @@ class CompletedTodo extends ConsumerWidget {
             ); 
           }
         ),
-    );
+      );
+    }
   }
-}
 
