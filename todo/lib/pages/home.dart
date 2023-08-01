@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
 import 'package:todo/pages/add.dart';
+import 'package:todo/pages/completed.dart';
 import 'package:todo/providers/todo_provider.dart';
 import '../models/todo.dart';
 
@@ -13,45 +14,72 @@ class MyHomePage extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     List<Todo> todos = ref.watch(todoProvider);
+    List<Todo> activeTodos = todos
+      .where(
+        (todo) => todo.completed == false,
+      )
+      .toList();
+    List<Todo> completedTodos = todos
+      .where(
+        (todo) => todo.completed == true,
+      )
+      .toList();
     
     return Scaffold(
       appBar: AppBar(
         title: const Text("Todo App"),
       ),
       body: ListView.builder(
-        itemCount: todos.length,
+        itemCount: activeTodos.length + 1,
         itemBuilder: (context, index) {
-          return Slidable(
-            startActionPane: ActionPane(
-              motion: const ScrollMotion(), 
-              children: [
-                SlidableAction(
-                  onPressed: (context) => 
-                    ref.watch(todoProvider.notifier).deleteTodo(index), 
-                  backgroundColor: Colors.red,
-                  borderRadius: const BorderRadius.all(Radius.circular(20)),
-                  icon: Icons.delete,
+          if(index == activeTodos.length) {
+            if(completedTodos.isEmpty) {
+              return Container(); 
+            } else {
+              return Center(
+                child: TextButton(
+                  child: const Text("Completed Todos"),
+                  onPressed: () => Navigator.of(context).push(
+                    MaterialPageRoute(
+                      builder: (context) => const CompletedTodo()
+                    ),
+                  ),
                 ),
-              ],
-            ),
-            endActionPane: ActionPane(
-              motion: const ScrollMotion(), 
-              children: [
-                SlidableAction(
-                  onPressed: (context) => 
-                    ref.watch(todoProvider.notifier).completeTodo(index), 
-                  backgroundColor: Colors.green,
-                  borderRadius: const BorderRadius.all(Radius.circular(20)),
-                  icon: Icons.check,
-                ),
-              ],
-            ),
-            child: ListTile(
-              title: Text(
-                todos[index].content,
+               );
+            }
+          } else {
+            return Slidable(
+              startActionPane: ActionPane(
+                motion: const ScrollMotion(), 
+                children: [
+                  SlidableAction(
+                    onPressed: (context) => 
+                      ref.watch(todoProvider.notifier).deleteTodo(index), 
+                    backgroundColor: Colors.red,
+                    borderRadius: const BorderRadius.all(Radius.circular(20)),
+                    icon: Icons.delete,
+                  ),
+                ],
               ),
-            ),
-          );
+              endActionPane: ActionPane(
+                motion: const ScrollMotion(), 
+                children: [
+                  SlidableAction(
+                    onPressed: (context) => 
+                      ref.watch(todoProvider.notifier).completeTodo(index), 
+                    backgroundColor: Colors.green,
+                    borderRadius: const BorderRadius.all(Radius.circular(20)),
+                    icon: Icons.check,
+                  ),
+                ],
+              ),
+              child: ListTile(
+               title: Text(
+                  activeTodos[index].content,
+                ),
+              ),
+            ); 
+          }
         },
       ),
       floatingActionButton: FloatingActionButton(
