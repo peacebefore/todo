@@ -32,6 +32,14 @@ class MyHomePage extends ConsumerWidget {
       body: ListView.builder(
         itemCount: activeTodos.length + 1,
         itemBuilder: (context, index) {
+          if (activeTodos.isEmpty) {
+            return const Padding(
+              padding: EdgeInsets.only(top: 300.0),
+              child: Center(
+                child: Text("Add a todo using the button below"),
+              ),
+            );
+          }
           if(index == activeTodos.length) {
             if(completedTodos.isEmpty) {
               return Container(); 
@@ -54,7 +62,9 @@ class MyHomePage extends ConsumerWidget {
                 children: [
                   SlidableAction(
                     onPressed: (context) => 
-                      ref.watch(todoProvider.notifier).deleteTodo(index), 
+                      ref
+                        .watch(todoProvider.notifier)
+                        .deleteTodo(activeTodos[index].todoId), 
                     backgroundColor: Colors.red,
                     borderRadius: const BorderRadius.all(Radius.circular(20)),
                     icon: Icons.delete,
@@ -66,16 +76,26 @@ class MyHomePage extends ConsumerWidget {
                 children: [
                   SlidableAction(
                     onPressed: (context) => 
-                      ref.watch(todoProvider.notifier).completeTodo(index), 
+                      ref
+                        .watch(todoProvider.notifier)
+                        .completeTodo(activeTodos[index].todoId), 
                     backgroundColor: Colors.green,
                     borderRadius: const BorderRadius.all(Radius.circular(20)),
                     icon: Icons.check,
                   ),
                 ],
               ),
-              child: ListTile(
-               title: Text(
-                  activeTodos[index].content,
+              child: Container(
+                margin: const EdgeInsets.all(8),
+                padding: const EdgeInsets.all(10),
+                decoration: const BoxDecoration(
+                  color: Color.fromARGB(179, 146, 218, 240), 
+                  borderRadius: BorderRadius.all(Radius.circular(20))
+                ),
+                child: ListTile(
+                 title: Text(
+                    activeTodos[index].content,
+                  ),
                 ),
               ),
             ); 
@@ -89,6 +109,7 @@ class MyHomePage extends ConsumerWidget {
           );
         },
         tooltip: 'Increment',
+        backgroundColor: Colors.black,
         child: const Icon(Icons.add),
       ), 
     );
